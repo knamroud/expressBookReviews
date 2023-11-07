@@ -10,8 +10,12 @@ app.use(express.json());
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+app.use("/customer/auth/*", function auth(req, res, next) {
+    if (req.session && req.session.user) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
 });
  
 const PORT =5000;
