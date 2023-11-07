@@ -1,6 +1,5 @@
 const express = require('express');
-let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
+const axios = require('axios');
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
@@ -21,34 +20,54 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.status(200).json(books);
+  async function getBooks() {
+    try {
+      const response = await axios.get('http://localhost:5001/');
+      return res.status(200).json(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  return getBooks();
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  return res.status(200).json(books[req.params.isbn]);
+  async function getBooks() {
+    try {
+      const response = await axios.get('http://localhost:5001/isbn/'+req.params.isbn);
+      return res.status(200).json(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  return getBooks();
 });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  let filtered = Object.keys(books)
-  .filter(key => books[key].author === req.params.author)
-  .reduce((obj, key) => {
-    obj[key] = books[key];
-    return obj;
-  }, {});
-  return res.status(200).json(filtered);
+  async function getBooks() {
+    try {
+      const response = await axios.get('http://localhost:5001/author/'+req.params.author);
+      return res.status(200).json(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  return getBooks();
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  let filtered = Object.keys(books)
-  .filter(key => books[key].title === req.params.title)
-  .reduce((obj, key) => {
-    obj[key] = books[key];
-    return obj;
-  }, {});
-  return res.status(200).json(filtered);
+  async function getBooks() {
+    try {
+      const response = await axios.get('http://localhost:5001/title/'+req.params.title);
+      return res.status(200).json(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  return getBooks();
 });
 
 //  Get book review
